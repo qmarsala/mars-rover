@@ -38,8 +38,7 @@ public class MarsRoverCommandHandler : ICommandRover
         command switch
         {
             RoverCommand.MoveForward => MoveForward(startingPosition),
-            RoverCommand.RotateRight =>
-                new RoverPosition(CardinalDirection.East, startingPosition.Position),
+            RoverCommand.RotateRight => RotateRight(startingPosition),
             _ =>
                 new RoverPosition(CardinalDirection.North, new(0, 0))
         };
@@ -47,14 +46,24 @@ public class MarsRoverCommandHandler : ICommandRover
     private RoverPosition MoveForward(RoverPosition currentPosition) =>
         currentPosition.Heading switch
         {
-            CardinalDirection.North => new RoverPosition(currentPosition.Heading, 
+            CardinalDirection.North => new RoverPosition(currentPosition.Heading,
                 new(currentPosition.Position.X, currentPosition.Position.Y + 1)),
-            CardinalDirection.East => new RoverPosition(currentPosition.Heading, 
+            CardinalDirection.East => new RoverPosition(currentPosition.Heading,
                 new(currentPosition.Position.X + 1, currentPosition.Position.Y)),
-            CardinalDirection.South => new RoverPosition(currentPosition.Heading, 
+            CardinalDirection.South => new RoverPosition(currentPosition.Heading,
                 new(currentPosition.Position.X, currentPosition.Position.Y - 1)),
-            CardinalDirection.West => new RoverPosition(currentPosition.Heading, 
+            CardinalDirection.West => new RoverPosition(currentPosition.Heading,
                 new(currentPosition.Position.X - 1, currentPosition.Position.Y)),
+            _ => new RoverPosition(currentPosition.Heading, currentPosition.Position)
+        };
+
+    private RoverPosition RotateRight(RoverPosition currentPosition) =>
+        currentPosition.Heading switch
+        {
+            CardinalDirection.North => new RoverPosition(CardinalDirection.East, currentPosition.Position),
+            CardinalDirection.East => new RoverPosition(CardinalDirection.South, currentPosition.Position),
+            CardinalDirection.South => new RoverPosition(CardinalDirection.West, currentPosition.Position),
+            CardinalDirection.West => new RoverPosition(CardinalDirection.North, currentPosition.Position),
             _ => new RoverPosition(currentPosition.Heading, currentPosition.Position)
         };
 }
