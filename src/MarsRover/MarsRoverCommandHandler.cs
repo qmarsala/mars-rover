@@ -1,4 +1,5 @@
 ﻿namespace MarsRover;
+
 public record Position(int X, int Y);
 public record RoverCommandSequence(params RoverCommand[] Commands);
 public record RoverPosition(CardinalDirection Heading, Position Position);
@@ -20,6 +21,11 @@ public enum CardinalDirection
 public interface ICommandRover
 {
     RoverPosition Execute(RoverPosition startingPosition, RoverCommandSequence commandSequence);
+}
+
+public interface IParseInput<T>
+{
+    T Parse(string input);
 }
 
 public class MarsRoverCommandHandler : ICommandRover
