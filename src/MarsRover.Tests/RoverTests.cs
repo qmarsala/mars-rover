@@ -14,4 +14,17 @@ public class RoverTests
 
         result.ShouldBe(expectedPosition);
     }
+
+    [Fact]
+    public void Should_rotate_right()
+    {
+        var startingPosition = new RoverPosition(CardinalDirection.North, new(0, 0));
+        var commandSequence = new RoverCommandSequence(RoverCommand.RotateRight);
+        var expectedPosition = new RoverPosition(CardinalDirection.East, new(0, 0));
+
+        ICommandRover command = new MarsRoverCommandHandler();
+        var result = command.Execute(startingPosition, commandSequence);
+
+        result.ShouldBe(expectedPosition);
+    }
 }
