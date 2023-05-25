@@ -3,7 +3,7 @@ namespace MarsRover.Tests;
 public class RoverTests
 {
     [Fact]
-    public void Should_move_north()
+    public void Should_move_forward()
     {
         var startingPosition = new RoverPosition(CardinalDirection.North, new(0,0));
         var commandSequence = new RoverCommandSequence(RoverCommand.MoveForward);
