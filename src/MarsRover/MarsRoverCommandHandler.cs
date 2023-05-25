@@ -33,15 +33,18 @@ public class RoverCommandParser : IParseInput<RoverCommandSequence>
     public RoverCommandSequence Parse(string input)
     {
         var commands = input?
+            .Trim()
             .ToUpper()
             .ToCharArray()
-            .Select(s => s switch
-        {
-            'M' => RoverCommand.MoveForward,
-            'R' => RoverCommand.RotateRight,
-            'L' => RoverCommand.RotateLeft,
-            _ => RoverCommand.None,
-        }).ToArray() ?? Array.Empty<RoverCommand>();
+            .Select(c => c switch
+            {
+                'M' => RoverCommand.MoveForward,
+                'R' => RoverCommand.RotateRight,
+                'L' => RoverCommand.RotateLeft,
+                _ => RoverCommand.None,
+            })
+            .Where(c => c is not RoverCommand.None)
+            .ToArray() ?? Array.Empty<RoverCommand>();
         return new RoverCommandSequence(commands);
     }
 }
