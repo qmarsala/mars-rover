@@ -39,6 +39,7 @@ public class MarsRoverCommandHandler : ICommandRover
         return command switch
         {
             RoverCommand.MoveForward => new RoverPosition(CardinalDirection.North, new(0, 1)),
+            RoverCommand.RotateRight => new RoverPosition(CardinalDirection.East, startingPosition.Position),
             _ => new RoverPosition(CardinalDirection.North, new(0, 0))
         };
     }
