@@ -39,6 +39,7 @@ public class MarsRoverCommandHandler : ICommandRover
         {
             RoverCommand.MoveForward => MoveForward(startingPosition),
             RoverCommand.RotateRight => RotateRight(startingPosition),
+            RoverCommand.RotateLeft => RotateLeft(startingPosition),
             _ =>
                 new RoverPosition(CardinalDirection.North, new(0, 0))
         };
@@ -66,4 +67,14 @@ public class MarsRoverCommandHandler : ICommandRover
             CardinalDirection.West => new RoverPosition(CardinalDirection.North, currentPosition.Position),
             _ => new RoverPosition(currentPosition.Heading, currentPosition.Position)
         };
+
+    private RoverPosition RotateLeft(RoverPosition currentPosition) =>
+       currentPosition.Heading switch
+       {
+           CardinalDirection.North => new RoverPosition(CardinalDirection.West, currentPosition.Position),
+           CardinalDirection.East => new RoverPosition(CardinalDirection.North, currentPosition.Position),
+           CardinalDirection.South => new RoverPosition(CardinalDirection.East, currentPosition.Position),
+           CardinalDirection.West => new RoverPosition(CardinalDirection.South, currentPosition.Position),
+           _ => new RoverPosition(currentPosition.Heading, currentPosition.Position)
+       };
 }
