@@ -36,13 +36,10 @@ public class MarsRoverCommandHandler : ICommandRover
 
     private RoverPosition HandleCommand(RoverPosition startingPosition, RoverCommand command)
     {
-        if (command is RoverCommand.MoveForward)
+        return command switch
         {
-            return new RoverPosition(CardinalDirection.North, new(0, 1));
-        }
-        else
-        {
-            return new RoverPosition(CardinalDirection.North, new(0, 0));
-        }
+            RoverCommand.MoveForward => new RoverPosition(CardinalDirection.North, new(0, 1)),
+            _ => new RoverPosition(CardinalDirection.North, new(0, 0))
+        };
     }
 }
