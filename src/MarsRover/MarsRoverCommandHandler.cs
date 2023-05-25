@@ -34,13 +34,27 @@ public class MarsRoverCommandHandler : ICommandRover
         return position;
     }
 
-    private RoverPosition HandleCommand(RoverPosition startingPosition, RoverCommand command)
-    {
-        return command switch
+    private RoverPosition HandleCommand(RoverPosition startingPosition, RoverCommand command) =>
+        command switch
         {
-            RoverCommand.MoveForward => new RoverPosition(CardinalDirection.North, new(0, 1)),
-            RoverCommand.RotateRight => new RoverPosition(CardinalDirection.East, startingPosition.Position),
-            _ => new RoverPosition(CardinalDirection.North, new(0, 0))
+            RoverCommand.MoveForward => MoveForward(startingPosition),
+            RoverCommand.RotateRight =>
+                new RoverPosition(CardinalDirection.East, startingPosition.Position),
+            _ =>
+                new RoverPosition(CardinalDirection.North, new(0, 0))
         };
-    }
+
+    private RoverPosition MoveForward(RoverPosition currentPosition) =>
+        currentPosition.Heading switch
+        {
+            CardinalDirection.North => new RoverPosition(currentPosition.Heading, 
+                new(currentPosition.Position.X, currentPosition.Position.Y + 1)),
+            CardinalDirection.East => new RoverPosition(currentPosition.Heading, 
+                new(currentPosition.Position.X + 1, currentPosition.Position.Y)),
+            CardinalDirection.South => new RoverPosition(currentPosition.Heading, 
+                new(currentPosition.Position.X, currentPosition.Position.Y - 1)),
+            CardinalDirection.West => new RoverPosition(currentPosition.Heading, 
+                new(currentPosition.Position.X - 1, currentPosition.Position.Y)),
+            _ => new RoverPosition(currentPosition.Heading, currentPosition.Position)
+        };
 }
