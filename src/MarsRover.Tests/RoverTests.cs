@@ -19,12 +19,20 @@ public class RoverTests
         result.ShouldBe(expectedPosition);
     }
 
-    [Fact]
-    public void Should_rotate_right()
+    [Theory]
+    [InlineData(CardinalDirection.North, RoverCommand.RotateRight, CardinalDirection.East)]
+    [InlineData(CardinalDirection.East, RoverCommand.RotateRight, CardinalDirection.South)]
+    [InlineData(CardinalDirection.South, RoverCommand.RotateRight, CardinalDirection.West)]
+    [InlineData(CardinalDirection.West, RoverCommand.RotateRight, CardinalDirection.North)]
+    [InlineData(CardinalDirection.North, RoverCommand.RotateLeft, CardinalDirection.West)]
+    [InlineData(CardinalDirection.West, RoverCommand.RotateLeft, CardinalDirection.South)]
+    [InlineData(CardinalDirection.South, RoverCommand.RotateLeft, CardinalDirection.East)]
+    [InlineData(CardinalDirection.East, RoverCommand.RotateLeft, CardinalDirection.North)]
+    public void Should_rotate(CardinalDirection startingHeading, RoverCommand roverCommand, CardinalDirection expectedHeading)
     {
-        var startingPosition = new RoverPosition(CardinalDirection.North, new(0, 0));
-        var commandSequence = new RoverCommandSequence(RoverCommand.RotateRight);
-        var expectedPosition = new RoverPosition(CardinalDirection.East, new(0, 0));
+        var startingPosition = new RoverPosition(startingHeading, new(1, 1));
+        var commandSequence = new RoverCommandSequence(roverCommand);
+        var expectedPosition = new RoverPosition(expectedHeading, new(1, 1));
 
         ICommandRover command = new MarsRoverCommandHandler();
         var result = command.Execute(startingPosition, commandSequence);
