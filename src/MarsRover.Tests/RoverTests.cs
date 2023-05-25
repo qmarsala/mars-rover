@@ -13,7 +13,7 @@ public class RoverTests
         var commandSequence = new RoverCommandSequence(RoverCommand.MoveForward);
         var expectedPosition = new RoverPosition(expectedDirection, new(expectedX, expectedY));
 
-        ICommandRover command = new MarsRoverCommandHandler();
+        ICommandRover command = new MarsRoverCommandHandler(new Boundary(new(-10, -10), new(10, 10)));
         var result = command.Execute(startingPosition, commandSequence);
 
         result.ShouldBe(expectedPosition);
@@ -34,7 +34,21 @@ public class RoverTests
         var commandSequence = new RoverCommandSequence(roverCommand);
         var expectedPosition = new RoverPosition(expectedHeading, new(1, 1));
 
-        ICommandRover command = new MarsRoverCommandHandler();
+        ICommandRover command = new MarsRoverCommandHandler(new Boundary(new(-10,-10), new(10,10)));
+        var result = command.Execute(startingPosition, commandSequence);
+
+        result.ShouldBe(expectedPosition);
+    }
+
+    [Fact]
+    public void Should_not_cross_boundary()
+    {
+        var boundary = new Boundary(new(0, 0), new(1, 1));
+        var startingPosition = new RoverPosition(CardinalDirection.North, new(1, 1));
+        var commandSequence = new RoverCommandSequence(RoverCommand.MoveForward);
+        var expectedPosition = new RoverPosition(CardinalDirection.North, new(1, 1));
+
+        ICommandRover command = new MarsRoverCommandHandler(boundary);
         var result = command.Execute(startingPosition, commandSequence);
 
         result.ShouldBe(expectedPosition);

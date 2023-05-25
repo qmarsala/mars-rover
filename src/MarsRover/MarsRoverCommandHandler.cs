@@ -2,7 +2,7 @@
 public record Position(int X, int Y);
 public record RoverCommandSequence(params RoverCommand[] Commands);
 public record RoverPosition(CardinalDirection Heading, Position Position);
-public record Plateau(Position BottomLeft, Position TopRight);
+public record Boundary(Position BottomLeft, Position TopRight);
 
 public enum RoverCommand
 {
@@ -24,6 +24,13 @@ public interface ICommandRover
 
 public class MarsRoverCommandHandler : ICommandRover
 {
+    public Boundary Boundary { get; } = new Boundary(new(0, 0), new(0, 0));
+
+    public MarsRoverCommandHandler(Boundary boundary)
+    {
+        Boundary = boundary;
+    }
+
     public RoverPosition Execute(RoverPosition startingPosition, RoverCommandSequence commandSequence)
     {
         var position = new RoverPosition(startingPosition.Heading, startingPosition.Position);
@@ -40,23 +47,32 @@ public class MarsRoverCommandHandler : ICommandRover
             RoverCommand.MoveForward => MoveForward(startingPosition),
             RoverCommand.RotateRight => RotateRight(startingPosition),
             RoverCommand.RotateLeft => RotateLeft(startingPosition),
-            _ =>
-                new RoverPosition(CardinalDirection.North, new(0, 0))
+            _ => startingPosition
         };
 
-    private RoverPosition MoveForward(RoverPosition currentPosition) =>
-        currentPosition.Heading switch
-        {
-            CardinalDirection.North => new RoverPosition(currentPosition.Heading,
-                new(currentPosition.Position.X, currentPosition.Position.Y + 1)),
-            CardinalDirection.East => new RoverPosition(currentPosition.Heading,
-                new(currentPosition.Position.X + 1, currentPosition.Position.Y)),
-            CardinalDirection.South => new RoverPosition(currentPosition.Heading,
-                new(currentPosition.Position.X, currentPosition.Position.Y - 1)),
-            CardinalDirection.West => new RoverPosition(currentPosition.Heading,
-                new(currentPosition.Position.X - 1, currentPosition.Position.Y)),
-            _ => new RoverPosition(currentPosition.Heading, currentPosition.Position)
-        };
+    private RoverPosition MoveForward(RoverPosition currentPosition)
+    {
+        var potentialPosition =
+            currentPosition.Heading switch
+            {
+                CardinalDirection.North => new RoverPosition(currentPosition.Heading,
+                    new(currentPosition.Position.X, currentPosition.Position.Y + 1)),
+                CardinalDirection.East => new RoverPosition(currentPosition.Heading,
+                    new(currentPosition.Position.X + 1, currentPosition.Position.Y)),
+                CardinalDirection.South => new RoverPosition(currentPosition.Heading,
+                    new(currentPosition.Position.X, currentPosition.Position.Y - 1)),
+                CardinalDirection.West => new RoverPosition(currentPosition.Heading,
+                    new(currentPosition.Position.X - 1, currentPosition.Position.Y)),
+                _ => new RoverPosition(currentPosition.Heading, currentPosition.Position)
+            };
+
+        return potentialPosition.Position.X >= Boundary.BottomLeft.X
+            && potentialPosition.Position.X <= Boundary.TopRight.X
+            && potentialPosition.Position.Y >= Boundary.BottomLeft.Y
+            && potentialPosition.Position.Y <= Boundary.TopRight.Y
+            ? potentialPosition
+            : currentPosition;
+    }
 
     private RoverPosition RotateRight(RoverPosition currentPosition) =>
         currentPosition.Heading switch
