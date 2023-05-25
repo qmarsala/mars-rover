@@ -1,14 +1,24 @@
-﻿record Position(int X, int Y);
-record RoverCommandSequence(string commandString);
-record RoverPosition(CardinalDirection Heading, Position Position);
-record Plateau(Position BottomLeft, Position TopRight);
+﻿namespace MarsRover;
 
-enum CardinalDirection
+public record Position(int X, int Y);
+public record RoverCommandSequence(params RoverCommand[] Commands);
+public record RoverPosition(CardinalDirection Heading, Position Position);
+public record Plateau(Position BottomLeft, Position TopRight);
+
+public enum RoverCommand 
+{
+    None,
+    MoveForward,
+    RotateRight,
+    RotateLeft
+}
+
+public enum CardinalDirection
 {
     North, East, South, West
 }
 
-interface ICommandRover
+public interface ICommandRover
 {
     RoverPosition Execute(RoverPosition startingPosition, RoverCommandSequence commandSequence);
 }
