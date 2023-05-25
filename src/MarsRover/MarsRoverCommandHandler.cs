@@ -28,6 +28,24 @@ public interface IParseInput<T>
     T Parse(string input);
 }
 
+public class RoverCommandParser : IParseInput<RoverCommandSequence>
+{
+    public RoverCommandSequence Parse(string input)
+    {
+        var commands = input?
+            .ToUpper()
+            .ToCharArray()
+            .Select(s => s switch
+        {
+            'M' => RoverCommand.MoveForward,
+            'R' => RoverCommand.RotateRight,
+            'L' => RoverCommand.RotateLeft,
+            _ => RoverCommand.None,
+        }).ToArray() ?? Array.Empty<RoverCommand>();
+        return new RoverCommandSequence(commands);
+    }
+}
+
 public class MarsRoverCommandHandler : ICommandRover
 {
     public Boundary Boundary { get; } = new Boundary(new(0, 0), new(0, 0));
