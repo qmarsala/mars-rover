@@ -28,6 +28,26 @@ public interface IParseInput<T>
     T Parse(string input);
 }
 
+public class BoundaryParser : IParseInput<Boundary>
+{
+    public Boundary Parse(string input)
+    {
+        var topRightBoundaryParts = input?
+            .Trim()
+            .ToUpper()
+            .Split(" ")
+            .Where(s => !string.IsNullOrWhiteSpace(s))
+            .Select(ParseNumber)
+            .ToArray();
+        var topRightBoundaryXY = topRightBoundaryParts?.Count() > 1 
+            ? topRightBoundaryParts 
+            : new[] { 0, 0 };
+        return new Boundary(new(0, 0), new(topRightBoundaryXY[0], topRightBoundaryXY[1]));
+    }
+
+    private int ParseNumber(string numberString) => int.TryParse(numberString, out var number) ? number : 0;
+}
+
 public class RoverCommandParser : IParseInput<RoverCommandSequence>
 {
     public RoverCommandSequence Parse(string input)
