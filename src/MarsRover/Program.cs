@@ -42,8 +42,9 @@ while (true)
     var commandHandler = new MarsRoverCommandHandler(boundary);
     var result1 = commandHandler.Execute(rover1Pos, rover1Commands);
     var result2 = commandHandler.Execute(rover2Pos, rover2Commands);
-    Console.WriteLine(result1);
-    Console.WriteLine(result2);
+    Console.WriteLine($"{result1.Position.X} {result1.Position.Y} {result1.Heading}");
+    Console.WriteLine($"{result2.Position.X} {result2.Position.Y} {result2.Heading}");
+
 }
 
 Console.WriteLine("Goodbye!");
