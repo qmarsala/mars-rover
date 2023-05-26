@@ -15,7 +15,11 @@ public enum RoverCommand
 
 public enum CardinalDirection
 {
-    North, East, South, West
+    None,
+    North, 
+    East, 
+    South, 
+    West
 }
 
 public interface ICommandRover
@@ -28,24 +32,56 @@ public interface IParseInput<T>
     T Parse(string input);
 }
 
-public class BoundaryParser : IParseInput<Boundary>
+public class RoverPositionParser : IParseInput<RoverPosition>
 {
-    public Boundary Parse(string input)
+    public RoverPosition Parse(string input)
     {
-        var topRightBoundaryParts = input?
+        var position = new PositionParser().Parse(input);
+        var heading = input?
+            .Trim()?
+            .Split(" ")?
+            .Where(s => !string.IsNullOrWhiteSpace(s))?
+            .LastOrDefault()?
+            .Select(c => c switch
+            {
+                'N' => CardinalDirection.North,
+                'E' => CardinalDirection.East,
+                'S' => CardinalDirection.South,
+                'W' => CardinalDirection.West,
+                _ => CardinalDirection.None
+            })
+            .FirstOrDefault() ?? CardinalDirection.None;
+        return new RoverPosition(heading, position);
+    }
+}
+
+public class PositionParser : IParseInput<Position>
+{
+    public Position Parse(string input)
+    {
+        var positionParts = input?
             .Trim()
             .ToUpper()
             .Split(" ")
             .Where(s => !string.IsNullOrWhiteSpace(s))
             .Select(ParseNumber)
             .ToArray();
-        var topRightBoundaryXY = topRightBoundaryParts?.Count() > 1 
-            ? topRightBoundaryParts 
+        var xy = positionParts?.Count() > 1
+            ? positionParts
             : new[] { 0, 0 };
-        return new Boundary(new(0, 0), new(topRightBoundaryXY[0], topRightBoundaryXY[1]));
+        return new(xy[0], xy[1]);
     }
 
     private int ParseNumber(string numberString) => int.TryParse(numberString, out var number) ? number : 0;
+}
+
+public class BoundaryParser : IParseInput<Boundary>
+{
+    public Boundary Parse(string input)
+    {
+        var pos = new PositionParser().Parse(input);
+        return new Boundary(new(0, 0), pos);
+    }
 }
 
 public class RoverCommandParser : IParseInput<RoverCommandSequence>
