@@ -39,6 +39,7 @@ public class RoverPositionParser : IParseInput<RoverPosition>
         var position = new PositionParser().Parse(input);
         var heading = input?
             .Trim()?
+            .ToUpper()?
             .Split(" ")?
             .Where(s => !string.IsNullOrWhiteSpace(s))?
             .LastOrDefault()?
